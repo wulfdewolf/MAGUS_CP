@@ -22,13 +22,7 @@ def mergeSubalignments(context):
     
     buildGraph(context)
     clusterGraph(context.graph)
-
-    # Time the trace
-    start = time.time()
     findTrace(context.graph)
-    end = time.time()
-    Configs.log("TRACE finished in {} seconds.".format(end-start))
-
     optimizeTrace(context.graph)    
     writeAlignment(context)
     
