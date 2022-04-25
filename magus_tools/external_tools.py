@@ -147,3 +147,6 @@ def runHmmSearch(hmmModelPath, fragPath, workingDir, outputPath):
     args.extend([hmmModelPath, fragPath])
     taskArgs = {"command" : subprocess.list2cmdline(args), "fileCopyMap" : {tempPath : outputPath}, "workingDir" : workingDir}
     return Task(taskType = "runCommand", outputFile = outputPath, taskArgs = taskArgs)
+
+def runMinizincTrace(clusters, matSubPosMap, workingDir, outputPath):
+    return 0

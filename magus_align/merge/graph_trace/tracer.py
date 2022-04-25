@@ -6,6 +6,7 @@ Created on Jul 17, 2020
 
 import os
 import time
+from MAGUS_CP.magus_align.merge.graph_trace.cp import CPSearch
 
 from magus_configuration import Configs
 from magus_align.merge.graph_cluster.clean_clusters import purgeClusterViolations, purgeDuplicateClusters
@@ -33,23 +34,27 @@ def findTrace(graph):
     else:
         purgeDuplicateClusters(graph)
         purgeClusterViolations(graph)
+
+        if Configs.graphTraceMethod == "cp":
+            CPSearch(graph)
+        else:
         
-        if Configs.graphTraceMethod == "minclusters":
-            minClustersSearch(graph)       
-        elif Configs.graphTraceMethod == "fm":            
-            fmAlgorithm(graph)        
-        elif Configs.graphTraceMethod == "mwtgreedy":
-            mwtGreedySearch(graph)
-        elif Configs.graphTraceMethod == "mwtsearch":
-            mwtSearch(graph)
-        elif Configs.graphTraceMethod == "rg":
-            rgSearch(graph)
-        elif Configs.graphTraceMethod == "rgfast":
-            rgFastSearch(graph)
-        elif Configs.graphTraceMethod == "naive":
-            naiveClustering(graph)
+            if Configs.graphTraceMethod == "minclusters":
+                minClustersSearch(graph)       
+            elif Configs.graphTraceMethod == "fm":            
+                fmAlgorithm(graph)        
+            elif Configs.graphTraceMethod == "mwtgreedy":
+                mwtGreedySearch(graph)
+            elif Configs.graphTraceMethod == "mwtsearch":
+                mwtSearch(graph)
+            elif Configs.graphTraceMethod == "rg":
+                rgSearch(graph)
+            elif Configs.graphTraceMethod == "rgfast":
+                rgFastSearch(graph)
+            elif Configs.graphTraceMethod == "naive":
+                naiveClustering(graph)
         
-        graph.writeClustersToFile(graph.tracePath)
+            graph.writeClustersToFile(graph.tracePath)
     
     
     time2 = time.time()

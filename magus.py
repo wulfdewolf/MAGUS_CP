@@ -99,7 +99,7 @@ def parseArgs():
                         required=False, default="mcl")
     
     parser.add_argument("--graphtracemethod", type=str,
-                        help="Method for finding a trace from the alignment graph (minclusters, fm, mwtgreedy, or mwtsearch)",
+                        help="Method for finding a trace from the alignment graph (minclusters, fm, mwtgreedy, mwtsearch, or cp)",
                         required=False, default="minclusters")
     
     parser.add_argument("--graphtraceoptimize", type=str,
