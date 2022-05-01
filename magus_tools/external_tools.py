@@ -149,4 +149,12 @@ def runHmmSearch(hmmModelPath, fragPath, workingDir, outputPath):
     return Task(taskType = "runCommand", outputFile = outputPath, taskArgs = taskArgs)
 
 def runMinizincTrace(clusters, matSubPosMap, workingDir, outputPath):
-    return 0
+
+    # Create instance
+    instance = "nr_alignments = 3;max_cols = 3;input = array2d(1..nr_alignments, 1..max_cols,[ 1,  2,  3, 1,  2,  3, 3,  1,  0  ]);"
+
+    # Run minizinc
+    tempPath = os.path.join(os.path.dirname(outputPath), "temp_{}".format(os.path.basename(outputPath)))
+    args = ["echo", instance, "|", Configs.minizincPath, "--ozn", outputPath, "--model", "../../magus_tools/minizinc/tracing.mzn","--solver", "gecode", "--input-from-stdin"]
+    taskArgs = {"command" : subprocess.list2cmdline(args), "fileCopyMap" : {tempPath : outputPath}, "workingDir" : workingDir}
+    return Task(taskType = "runCommand", outputFile = outputPath, taskArgs = taskArgs)

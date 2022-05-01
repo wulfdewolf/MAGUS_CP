@@ -6,7 +6,6 @@ Created on Jul 17, 2020
 
 import os
 import time
-from MAGUS_CP.magus_align.merge.graph_trace.cp import CPSearch
 
 from magus_configuration import Configs
 from magus_align.merge.graph_cluster.clean_clusters import purgeClusterViolations, purgeDuplicateClusters
@@ -16,6 +15,7 @@ from magus_align.merge.graph_trace.mwt_search import mwtGreedySearch, mwtSearch
 from magus_align.merge.graph_trace.rg_search import rgSearch
 from magus_align.merge.graph_trace.rg_fast_search import rgFastSearch
 from magus_align.merge.graph_trace.naive import naiveClustering
+from magus_align.merge.graph_trace.cp import CPSearch
 
 '''
 Graph clusters must be refined into a "trace", a constrained clustering that corresponds to a valid MSA.

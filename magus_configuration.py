@@ -72,6 +72,7 @@ class Configs:
     hmmsearchPath = find_binary("magus_tools/hmmer/hmmsearch")
     fasttreePath = find_binary("magus_tools/fasttree/FastTreeMP")
     raxmlPath = find_binary("magus_tools/raxmlng/raxml-ng")
+    minizincPath = find_binary("magus_tools/minizinc/minizinc")
     
     logPath = None
     errorPath = None
