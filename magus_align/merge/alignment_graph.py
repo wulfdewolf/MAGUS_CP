@@ -114,10 +114,6 @@ class AlignmentGraph:
                             self.clusters[cluster_id] = self.clusters[cluster_id] + [self.subsetMatrixIdx[sub] + pos]
         print("Found {} clusters..".format(n_clusters))
 
-        # Write to standard format
-        self.writeClustersToFile(filePath)
-
-    
     def buildNodeEdgeDataStructure(self):
         Configs.log("Preparing node edge data structure..")
         k = len(self.subalignmentLengths)

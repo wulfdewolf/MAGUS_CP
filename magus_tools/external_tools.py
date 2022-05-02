@@ -151,17 +151,17 @@ def runHmmSearch(hmmModelPath, fragPath, workingDir, outputPath):
 def runMinizincTrace(graph, workingDir, outputPath):
 
     # Create instance
-    n_subaligments = len(graph.subalignmentLengths)
-    max_seq_length = max(graph.subalignmentLengths)
-    matrix = [[0 for col in range(max_seq_length)] for row in range(n_subaligments)]
+    nr_alignments = len(graph.subalignmentLengths)
+    input_length = graph.matrixSize 
+    subsetMatrixIdx = (graph.subsetMatrixIdx + 1) + [len(graph.matrix)] 
+    matrix = [0] * graph.matrixSize
     for cluster_id, cluster in enumerate(graph.clusters):
         for node in cluster:
-            suba, subpos = graph.matSubPosMap[node]
-            matrix[suba][subpos] = cluster_id + 1
+            matrix[node] = cluster_id + 1
         
     # Write instance
     with open(os.path.join(workingDir, "instance.mzn"), "w") as instance_file:
-        instance_file.write("nr_alignments = %i; max_cols = %i; input = array2d(1..nr_alignments, 1..max_cols,[" % (n_subaligments, max_seq_length) + ",".join([str(cluster_id) for subalignment in matrix for cluster_id in subalignment]) + "])")
+        instance_file.write("nr_alignments = %i; max_cols = %i; input = [" + ",".join(matrix) + "]; subalignment_start = [" + ",".join(subsetMatrixIdx) + "];" % (nr_alignments, input_length))
 
     # Run minizinc
     tempPath = os.path.join(os.path.dirname(outputPath), "temp_{}".format(os.path.basename(outputPath)))

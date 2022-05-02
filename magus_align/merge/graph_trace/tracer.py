@@ -33,11 +33,11 @@ def findTrace(graph):
         
     else:
         purgeDuplicateClusters(graph)
-        purgeClusterViolations(graph)
 
         if Configs.graphTraceMethod == "cp":
             CPSearch(graph)
         else:
+            purgeClusterViolations(graph)
         
             if Configs.graphTraceMethod == "minclusters":
                 minClustersSearch(graph)       
@@ -54,7 +54,7 @@ def findTrace(graph):
             elif Configs.graphTraceMethod == "naive":
                 naiveClustering(graph)
         
-            graph.writeClustersToFile(graph.tracePath)
+        graph.writeClustersToFile(graph.tracePath)
     
     
     time2 = time.time()
