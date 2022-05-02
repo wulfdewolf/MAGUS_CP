@@ -91,8 +91,8 @@ class AlignmentGraph:
         print("Found {} clusters..".format(len(self.clusters)))
 
     def readClustersFromCPFile(self, filePath):
-        self.clusters = []
         n_clusters = 0
+        cluster_ids = []
 
         # Parse from minizinc output
         with open(filePath) as f:
@@ -100,18 +100,19 @@ class AlignmentGraph:
             # Read number of clusters
             n_clusters = int(f.readLine().strip())
 
-            # Create clusters list
-            self.clusters = [[] for _ in range(n_clusters)]
+            # Read cluster ids
+            cluster_ids = [int(cluster_id) for cluster_id in f.readline().strip().split()]
 
-            # Loop over matrix
-            for sub, line in enumerate(f):
-                if "-" in line:
-                    break
-                else:
-                    cluster_ids = [int(cluster_id) for cluster_id in line.strip().split()]
-                    for pos, cluster_id in enumerate(cluster_ids):
-                        if cluster_id != 0:
-                            self.clusters[cluster_id] = self.clusters[cluster_id] + [self.subsetMatrixIdx[sub] + pos]
+        # Create clusters list
+        self.clusters = [[] for _ in range(n_clusters)]
+
+        # Loop over matrix
+        for i in range(cluster_ids):
+            self.clusters[cluster_ids[i]-1] = self.clusters[cluster_ids[i]-1] + [i]
+
+        # Remove singletons
+        self.clusters = [cluster for cluster in self.clusters if len(cluster) > 1]
+
         print("Found {} clusters..".format(n_clusters))
 
     def buildNodeEdgeDataStructure(self):

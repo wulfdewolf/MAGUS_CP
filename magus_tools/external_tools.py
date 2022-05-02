@@ -153,15 +153,23 @@ def runMinizincTrace(graph, workingDir, outputPath):
     # Create instance
     nr_alignments = len(graph.subalignmentLengths)
     input_length = graph.matrixSize 
-    subsetMatrixIdx = (graph.subsetMatrixIdx + 1) + [len(graph.matrix)] 
+    subsetMatrixIdx = [idx + 1 for idx in graph.subsetMatrixIdx] + [len(graph.matrix)] 
     matrix = [0] * graph.matrixSize
     for cluster_id, cluster in enumerate(graph.clusters):
         for node in cluster:
             matrix[node] = cluster_id + 1
+    new_singleton_id = len(graph.clusters)
+    for node in range(len(matrix)):
+        if matrix[node] == 0:
+            matrix[node] = new_singleton_id
+            new_singleton_id += 1
         
     # Write instance
     with open(os.path.join(workingDir, "instance.mzn"), "w") as instance_file:
-        instance_file.write("nr_alignments = %i; max_cols = %i; input = [" + ",".join(matrix) + "]; subalignment_start = [" + ",".join(subsetMatrixIdx) + "];" % (nr_alignments, input_length))
+        instance_file.write(f"nr_alignments = {nr_alignments};\n" +
+                            f"input_length = {input_length};\n" +
+                            "input = [" + ",".join([str(val) for val in matrix]) + "];\n" +
+                            "subalignment_start = [" + ",".join([str(val) for val in subsetMatrixIdx]) + "];\n")
 
     # Run minizinc
     tempPath = os.path.join(os.path.dirname(outputPath), "temp_{}".format(os.path.basename(outputPath)))
