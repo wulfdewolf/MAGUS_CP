@@ -15,5 +15,5 @@ We use constraint programming (MiniZinc) to search for the solution with the sma
 
 def CPSearch(graph):
     Configs.log("Finding graph trace with constraint programming..")
-    external_tools.runMinizincTrace(graph.clusters, graph.matSubPosMap, graph.workingDir, graph.tracePath).run()
-    graph.readClustersFromFile(graph.tracePath)
+    external_tools.runMinizincTrace(graph, graph.workingDir, graph.tracePath).run()
+    graph.readClustersFromCPFile(graph.tracePath)

@@ -88,7 +88,7 @@ Alternatively, the user can provide his own backbones; *-b* can be used to provi
 **Specify graph trace method**  
 *python3 ../magus.py -d outputs -i unaligned_sequences.txt --graphtracemethod mwtgreedy -o magus_result.txt*  
 
-*--graphtracemethod* is the flag that governs the graph trace method. Options are minclusters (default and recommended), fm, mwtgreedy (recommended for very large graphs), rg, or mwtsearch.
+*--graphtracemethod* is the flag that governs the graph trace method. Options are minclusters (default and recommended), fm, mwtgreedy (recommended for very large graphs), rg, mwtsearch, or cp (constraint programming).
 
 **Unconstrained alignment**  
 *python3 ../magus.py -d outputs -i unaligned_sequences.txt -c false -o magus_result.txt*  

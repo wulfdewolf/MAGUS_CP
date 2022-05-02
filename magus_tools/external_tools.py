@@ -148,13 +148,23 @@ def runHmmSearch(hmmModelPath, fragPath, workingDir, outputPath):
     taskArgs = {"command" : subprocess.list2cmdline(args), "fileCopyMap" : {tempPath : outputPath}, "workingDir" : workingDir}
     return Task(taskType = "runCommand", outputFile = outputPath, taskArgs = taskArgs)
 
-def runMinizincTrace(clusters, matSubPosMap, workingDir, outputPath):
+def runMinizincTrace(graph, workingDir, outputPath):
 
     # Create instance
-    instance = "nr_alignments = 3;max_cols = 3;input = array2d(1..nr_alignments, 1..max_cols,[ 1,  2,  3, 1,  2,  3, 3,  1,  0  ]);"
+    n_subaligments = len(graph.subalignmentLengths)
+    max_seq_length = max(graph.subalignmentLengths)
+    matrix = [[0 for col in range(max_seq_length)] for row in range(n_subaligments)]
+    for cluster_id, cluster in enumerate(graph.clusters):
+        for node in cluster:
+            suba, subpos = graph.matSubPosMap[node]
+            matrix[suba][subpos] = cluster_id + 1
+        
+    # Write instance
+    with open(os.path.join(workingDir, "instance.mzn"), "w") as instance_file:
+        instance_file.write("nr_alignments = %i; max_cols = %i; input = array2d(1..nr_alignments, 1..max_cols,[" % (n_subaligments, max_seq_length) + ",".join([str(cluster_id) for subalignment in matrix for cluster_id in subalignment]) + "])")
 
     # Run minizinc
     tempPath = os.path.join(os.path.dirname(outputPath), "temp_{}".format(os.path.basename(outputPath)))
-    args = ["echo", instance, "|", Configs.minizincPath, "--ozn", outputPath, "--model", "../../magus_tools/minizinc/tracing.mzn","--solver", "gecode", "--input-from-stdin"]
+    args = [Configs.minizincPath, "-o", tempPath, "--model", os.path.join(os.path.dirname(os.path.realpath(__file__)), "minizinc/tracing.mzn"),"--solver", "gecode", os.path.join(workingDir, "instance.mzn")]
     taskArgs = {"command" : subprocess.list2cmdline(args), "fileCopyMap" : {tempPath : outputPath}, "workingDir" : workingDir}
     return Task(taskType = "runCommand", outputFile = outputPath, taskArgs = taskArgs)

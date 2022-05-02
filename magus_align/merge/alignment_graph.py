@@ -89,6 +89,34 @@ class AlignmentGraph:
                 if len(tokens) > 1:
                     self.clusters.append(tokens) 
         print("Found {} clusters..".format(len(self.clusters)))
+
+    def readClustersFromCPFile(self, filePath):
+        self.clusters = []
+        n_clusters = 0
+
+        # Parse from minizinc output
+        with open(filePath) as f:
+
+            # Read number of clusters
+            n_clusters = int(f.readLine().strip())
+
+            # Create clusters list
+            self.clusters = [[] for _ in range(n_clusters)]
+
+            # Loop over matrix
+            for sub, line in enumerate(f):
+                if "-" in line:
+                    break
+                else:
+                    cluster_ids = [int(cluster_id) for cluster_id in line.strip().split()]
+                    for pos, cluster_id in enumerate(cluster_ids):
+                        if cluster_id != 0:
+                            self.clusters[cluster_id] = self.clusters[cluster_id] + [self.subsetMatrixIdx[sub] + pos]
+        print("Found {} clusters..".format(n_clusters))
+
+        # Write to standard format
+        self.writeClustersToFile(filePath)
+
     
     def buildNodeEdgeDataStructure(self):
         Configs.log("Preparing node edge data structure..")
@@ -175,7 +203,3 @@ class AlignmentGraph:
                 newClusters.append([node])
         self.clusters = newClusters
         return newClusters
-    
-    
-    
-    
