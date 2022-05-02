@@ -36,7 +36,10 @@ solve :: int_search(cluster_ids, input_order, indomain_min)
 % output["max_id = " ++ show(max(cluster_ids)) ++ "\n" ++ 
 %        join("\n", [ join(", ", [show(cluster_ids[a, c]) | c in 1..max_cols]) | a in 1..nr_alignments])]  ;
 
-output[ join(",", [show(cluster_ids[i]) | i in 1..input_length])];
+output[ show(max(cluster_ids)) ++ "\n" ++
+        join(" ", [show(cluster_ids[i]) | i in 1..input_length])]
+
+%output[ join(",", [show(cluster_ids[i]) | i in 1..input_length])];
 
 % ------------- TODO -------------
 %
