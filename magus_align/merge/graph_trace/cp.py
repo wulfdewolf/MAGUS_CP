@@ -36,7 +36,7 @@ def CPSearch(graph):
     # Run minclusters to get upperbound
     incorrect_clusters = graph.clusters
     minClustersSearch(graph)
-    upper_bound = graph.clusters
+    upper_bound = len(graph.clusters)
     graph.clusters = incorrect_clusters
     
     # Setup output
