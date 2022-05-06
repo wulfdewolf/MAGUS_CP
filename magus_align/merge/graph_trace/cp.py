@@ -42,7 +42,7 @@ def CPSearch(graph):
     # Setup output
     output = intvar(1, upper_bound, shape=(input[input != 0].size,), name="output")
     print(f"CREATED {input[input != 0].size} VARIABLES")
-    print("MEMORY USED: " + resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
+    print("MEMORY USED: " + str(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss))
 
     # CP using CPMPY
     model = Model()
@@ -65,7 +65,7 @@ def CPSearch(graph):
                 i += 1
 
     print("ADDED FIRST TYPE OF CONSTRAINTS")
-    print("MEMORY USED: " + resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
+    print("MEMORY USED: " + str(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss))
 
     # nodes having different cluster ids in the input, should also have different cluster ids in the output
     i = 0
@@ -85,7 +85,7 @@ def CPSearch(graph):
         i += 1
 
     print("REACHED SOLVING")
-    print("MEMORY USED: " + resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
+    print("MEMORY USED: " + str(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss))
 
     # Check following two possibilities for performance:
     #model.minimize(
