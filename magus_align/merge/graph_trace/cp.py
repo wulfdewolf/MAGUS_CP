@@ -7,6 +7,7 @@ Created on Apr 25, 2022
 from magus_configuration import Configs
 import numpy as np
 from cpmpy import *
+import resource
 
 # from magus_tools import external_tools
 
@@ -18,21 +19,12 @@ We use constraint programming (MiniZinc) to search for the solution with the sma
 
 def CPSearch(graph):
     Configs.log("Finding graph trace with constraint programming..")
-    # external_tools.runMinizincTrace(graph, graph.workingDir, graph.tracePath).run()
-    # graph.readClustersFromCPFile(graph.tracePath)
 
     # Create cluster id matrix
     input = [0] * graph.matrixSize
     for cluster_id, cluster in enumerate(graph.clusters):
         for node in cluster:
             input[node] = cluster_id + 1
-
-    # Fill singleton clusters
-    new_singleton_id = len(graph.clusters)
-    for node in range(len(input)):
-        if input[node] == 0:
-            input[node] = new_singleton_id
-            new_singleton_id += 1
 
     # Transform into numpy array
     input = np.array(input)
@@ -41,8 +33,10 @@ def CPSearch(graph):
     )
 
     # Setup output
-    nr_variables = input[input != 0].size
+    nr_variables = 100 #input[input != 0].size
     output = intvar(1, nr_variables, shape=input.shape, name="output")
+    print(f"CREATED {nr_variables} VARIABLES")
+    print("MEMORY USED: " + resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
 
     # CP using CPMPY
     model = Model()
@@ -64,6 +58,9 @@ def CPSearch(graph):
                         break
                 i += 1
 
+    print("ADDED FIRST TYPE OF CONSTRAINTS")
+    print("MEMORY USED: " + resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
+
     # nodes having different cluster ids in the input, should also have different cluster ids in the output
     i = 0
     j = 0
@@ -81,6 +78,9 @@ def CPSearch(graph):
 
         i += 1
 
+    print("REACHED SOLVING")
+    print("MEMORY USED: " + resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
+
     # Check following two possibilities for performance:
     model.minimize(
         max(
@@ -93,6 +93,8 @@ def CPSearch(graph):
     # model.minimize(max(output))
 
     if model.solve():
+
+        # Project output onto input
         i = 0
         for n in range(input.size):
             if input[n] != 0:
@@ -101,11 +103,9 @@ def CPSearch(graph):
     else:
         print("No solution found")
 
-    # Transform output to clusters
+    # Transform input to clusters
     n_clusters = max(input)
     graph.clusters = [[] for _ in range(n_clusters)]
-
-    # Loop over matrix
     for i in range(len(input)):
         if input[i] != 0:
             graph.clusters[input[i] - 1] = graph.clusters[input[i] - 1] + [i]
