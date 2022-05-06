@@ -4,6 +4,7 @@ Created on Apr 25, 2022
 @author: Wolf De Wulf, Dieter Vandesande
 """
 
+from ctypes import alignment
 from magus_configuration import Configs
 import numpy as np
 from cpmpy import *
@@ -32,6 +33,10 @@ def CPSearch(graph):
     subalignment_start = np.array(
         [idx + 1 for idx in graph.subsetMatrixIdx] + [len(graph.matrix)]
     )
+    Configs.log("INPUT: " + str(input))
+    Configs.log("INPUT LENGTH: " + str(len(input)))
+    Configs.log("ALIGNMENT STARTS: " + str(subalignment_start))
+    Configs.log("ALIGNMENT STARTS LENGTH: " + str(len(subalignment_start)))
 
     # Run minclusters to get upperbound
     incorrect_clusters = graph.clusters
@@ -41,41 +46,46 @@ def CPSearch(graph):
     
     # Setup output
     output = intvar(1, upper_bound, shape=(input[input != 0].size,), name="output")
-    print(f"CREATED {input[input != 0].size} VARIABLES")
-    print("MEMORY USED: " + str(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss))
+    Configs.log(f"CREATED {input[input != 0].size} VARIABLES")
+    Configs.log("MEMORY USED: " + str(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss))
 
     # CP using CPMPY
     model = Model()
 
     # all variables of the same alignment should be ordered strictly increasing.
     for a in range(subalignment_start.size - 1):
-        print("NEW SUBALIGNMENT: " + str(a))
+        Configs.log("NEW SUBALIGNMENT: " + str(a))
+        Configs.log("in1 = " + str(in1))
         in1 = subalignment_start[a]
         out1 = subalignment_start[a]
+        Configs.log("in1 = " + str(in1))
+        Configs.log("out1 = " + str(out1))
         while in1 < subalignment_start[a+1]-1:
             if input[in1] == 0:
-                print("SKIPPING N1: " + str(in1))
+                Configs.log("SKIPPING in1: " + str(in1))
                 in1 += 1
             else:
                 in2 = in1 + 1
                 out2 = out1 + 1
                 while in2 < subalignment_start[a+1]:
                     if input[in2] == 0:
+                        Configs.log("SKIPPING in2: " + str(in2))
                         in2 += 1
                     else:
                         model += output[in1] < output[in2]
                         in1 = in2
                         out1 += 1
-                        print("NEXT N1: " + str(in1))
+                        Configs.log("NEXT in1: " + str(in1))
                         break
+        a += 1
 
-    print("ADDED FIRST TYPE OF CONSTRAINTS")
-    print("MEMORY USED: " + str(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss))
+    Configs.log("ADDED FIRST TYPE OF CONSTRAINTS")
+    Configs.log("MEMORY USED: " + str(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss))
 
     # nodes having different cluster ids in the input, should also have different cluster ids in the output
     in1 = 0
     out1 = 0
-    while n1 < input.size-1:
+    while in1 < input.size-1:
         if input[in1] == 0:
             in1 += 1
         else:
@@ -91,8 +101,8 @@ def CPSearch(graph):
             in1 += 1
             out1 += 1
     
-    print("REACHED SOLVING")
-    print("MEMORY USED: " + str(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss))
+    Configs.log("REACHED SOLVING")
+    Configs.log("MEMORY USED: " + str(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss))
 
     # Check following two possibilities for performance:
     #model.minimize(
