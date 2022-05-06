@@ -48,11 +48,13 @@ def CPSearch(graph):
     model = Model()
 
     # all variables of the same alignment should be ordered strictly increasing.
-    for a in range(subalignment_start.size):
+    for a in range(subalignment_start.size - 1):
+        print("NEW SUBALIGNMENT: " + str(a))
         in1 = subalignment_start[a]
         out1 = subalignment_start[a]
         while in1 < subalignment_start[a+1]-1:
             if input[in1] == 0:
+                print("SKIPPING N1: " + str(in1))
                 in1 += 1
             else:
                 in2 = in1 + 1
@@ -64,6 +66,7 @@ def CPSearch(graph):
                         model += output[in1] < output[in2]
                         in1 = in2
                         out1 += 1
+                        print("NEXT N1: " + str(in1))
                         break
 
     print("ADDED FIRST TYPE OF CONSTRAINTS")
