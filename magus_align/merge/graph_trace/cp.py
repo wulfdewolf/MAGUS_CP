@@ -8,6 +8,7 @@ from magus_configuration import Configs
 import numpy as np
 from cpmpy import *
 import resource
+from magus_align.merge.graph_trace.min_clusters import minClustersSearch
 
 # from magus_tools import external_tools
 
@@ -32,10 +33,15 @@ def CPSearch(graph):
         [idx + 1 for idx in graph.subsetMatrixIdx] + [len(graph.matrix)]
     )
 
+    # Run minclusters to get upperbound
+    incorrect_clusters = graph.clusters
+    minClustersSearch(graph)
+    upper_bound = graph.clusters
+    graph.clusters = incorrect_clusters
+    
     # Setup output
-    nr_variables = 100 #input[input != 0].size
-    output = intvar(1, nr_variables, shape=input.shape, name="output")
-    print(f"CREATED {nr_variables} VARIABLES")
+    output = intvar(1, upper_bound, shape=(input[input != 0].size,), name="output")
+    print(f"CREATED {input[input != 0].size} VARIABLES")
     print("MEMORY USED: " + resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
 
     # CP using CPMPY
@@ -49,7 +55,7 @@ def CPSearch(graph):
                 continue
             else:
                 for n1 in range(n + 1, subalignment_start[a + 1] + 1):
-                    if input[n] == 0:
+                    if input[n1] == 0:
                         continue
                     elif n1 == subalignment_start[a + 1]:
                         break
@@ -82,14 +88,14 @@ def CPSearch(graph):
     print("MEMORY USED: " + resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
 
     # Check following two possibilities for performance:
-    model.minimize(
-        max(
-            [
-                output[subalignment_start[a] - 1]
-                for a in range(1, subalignment_start.size)
-            ]
-        )
-    )
+    #model.minimize(
+    #    max(
+    #        [
+    #            output[subalignment_start[a] - 1]
+    #            for a in range(1, subalignment_start.size)
+    #        ]
+    #    )
+    #)
     # model.minimize(max(output))
 
     if model.solve():
