@@ -48,42 +48,46 @@ def CPSearch(graph):
     model = Model()
 
     # all variables of the same alignment should be ordered strictly increasing.
-    i = 0
-    for a in range(subalignment_start.size - 1):
-        for n in range(subalignment_start[a], subalignment_start[a + 1]):
-            if input[n] == 0:
-                continue
+    for a in range(subalignment_start.size):
+        in1 = subalignment_start[a]
+        out1 = subalignment_start[a]
+        while in1 < subalignment_start[a+1]-1:
+            if input[in1] == 0:
+                in1 += 1
             else:
-                for n1 in range(n + 1, subalignment_start[a + 1] + 1):
-                    if input[n1] == 0:
-                        continue
-                    elif n1 == subalignment_start[a + 1]:
-                        break
+                in2 = in1 + 1
+                out2 = out1 + 1
+                while in2 < subalignment_start[a+1]:
+                    if input[in2] == 0:
+                        in2 += 1
                     else:
-                        model += output[i] < output[i + 1]
+                        model += output[in1] < output[in2]
+                        in1 = in2
+                        out1 += 1
                         break
-                i += 1
 
     print("ADDED FIRST TYPE OF CONSTRAINTS")
     print("MEMORY USED: " + str(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss))
 
     # nodes having different cluster ids in the input, should also have different cluster ids in the output
-    i = 0
-    j = 0
-    for n1 in range(input.size - 1):
-        if input[n1] == 0:
-            continue
+    in1 = 0
+    out1 = 0
+    while n1 < input.size-1:
+        if input[in1] == 0:
+            in1 += 1
         else:
-            j = i + 1
-            for n2 in range(n1 + 1, input.size):
-                if input[n2] == 0:
-                    continue
-                elif input[n1] != input[n2]:
-                    model += output[i] != output[j]
-                j += 1
-
-        i += 1
-
+            in2 = in1 + 1
+            out2 = out1 + 1
+            while in2 < input.size:
+                if input[in2] == 0:
+                    in2 += 1
+                elif input[in1] != input[in2]:
+                    model += output[out1] != output[out2]
+                    in2 += 1
+                    out2 += 1
+            in1 += 1
+            out1 += 1
+    
     print("REACHED SOLVING")
     print("MEMORY USED: " + str(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss))
 
