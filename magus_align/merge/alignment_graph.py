@@ -90,25 +90,26 @@ class AlignmentGraph:
                     self.clusters.append(tokens) 
         print("Found {} clusters..".format(len(self.clusters)))
 
-    def readClustersFromCPFile(self, filePath):
-        n_clusters = 0
-        cluster_ids = []
+    def readClustersFromCPFile(self, filePath, input):
 
         # Parse from minizinc output
+        n_clusters = 0
+        output = []
         with open(filePath) as f:
 
-            # Read number of clusters
-            n_clusters = int(f.readLine().strip())
+            # Read number of found clusters
+            n_clusters = int(f.readline())
 
             # Read cluster ids
-            cluster_ids = [int(cluster_id) for cluster_id in f.readline().strip().split()]
+            output = [int(cluster_id) for cluster_id in f.readline().strip().split()]
 
-        # Create clusters list
+        # Loop over input and correctly parse output
         self.clusters = [[] for _ in range(n_clusters)]
-
-        # Loop over matrix
-        for i in range(cluster_ids):
-            self.clusters[cluster_ids[i]-1] = self.clusters[cluster_ids[i]-1] + [i]
+        output_idx = 0
+        for input_idx in range(len(input)):
+            if input[input_idx] != 0:
+                self.clusters[output[output_idx]-1] = self.clusters[output[output_idx]-1] + [input_idx]
+                output_idx += 1
 
         # Remove singletons
         self.clusters = [cluster for cluster in self.clusters if len(cluster) > 1]

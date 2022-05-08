@@ -39,24 +39,22 @@ def findTrace(graph):
         purgeDuplicateClusters(graph)
         purgeClusterViolations(graph)
 
-        if Configs.graphTraceMethod == "cp":
+        if Configs.graphTraceMethod == "minclusters":
+            minClustersSearch(graph)
+        elif Configs.graphTraceMethod == "fm":
+            fmAlgorithm(graph)
+        elif Configs.graphTraceMethod == "mwtgreedy":
+            mwtGreedySearch(graph)
+        elif Configs.graphTraceMethod == "mwtsearch":
+            mwtSearch(graph)
+        elif Configs.graphTraceMethod == "rg":
+            rgSearch(graph)
+        elif Configs.graphTraceMethod == "rgfast":
+            rgFastSearch(graph)
+        elif Configs.graphTraceMethod == "naive":
+            naiveClustering(graph)
+        elif Configs.graphTraceMethod == "cp":
             CPSearch(graph)
-        else:
-
-            if Configs.graphTraceMethod == "minclusters":
-                minClustersSearch(graph)
-            elif Configs.graphTraceMethod == "fm":
-                fmAlgorithm(graph)
-            elif Configs.graphTraceMethod == "mwtgreedy":
-                mwtGreedySearch(graph)
-            elif Configs.graphTraceMethod == "mwtsearch":
-                mwtSearch(graph)
-            elif Configs.graphTraceMethod == "rg":
-                rgSearch(graph)
-            elif Configs.graphTraceMethod == "rgfast":
-                rgFastSearch(graph)
-            elif Configs.graphTraceMethod == "naive":
-                naiveClustering(graph)
 
         graph.writeClustersToFile(graph.tracePath)
 
