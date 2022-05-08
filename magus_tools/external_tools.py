@@ -305,7 +305,6 @@ def runMinizincTrace(graph, upper_bound):
                 input_non_zero.append(input[input_idx])
                 subalignment_count += 1
         subalignment_start_non_zero.append(subalignment_count)
-    subalignment_start_non_zero += [len(input_non_zero) + 1]
 
     n_alignments = len(graph.subalignmentLengths)
     input_length = len(input_non_zero)
