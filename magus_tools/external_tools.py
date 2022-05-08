@@ -8,6 +8,7 @@ import subprocess
 import os
 import random
 import shutil
+import numpy
 from magus_configuration import Configs
 from magus_tasks.task import Task
 
@@ -289,7 +290,7 @@ def runMinizincTrace(graph, upper_bound):
     for cluster_id, cluster in enumerate(graph.clusters):
         for node in cluster:
             input[node] = cluster_id + 1
-    subalignment_start = graph.subsetMatrixIdx + [len(graph.matrix) - 1]
+    subalignment_start = graph.subsetMatrixIdx + [len(graph.matrix)]
 
     # Get non-zero version
     input_non_zero = []
@@ -302,19 +303,19 @@ def runMinizincTrace(graph, upper_bound):
         ):
             if input[input_idx] != 0:
                 input_non_zero.append(input[input_idx])
-                subalignment_start += 1
-        subalignment_start_non_zero.append(subalignment_start)
-    subalignment_start_non_zero += [len(subalignment_start_non_zero)]
+                subalignment_count += 1
+        subalignment_start_non_zero.append(subalignment_count)
+    subalignment_start_non_zero += [len(input_non_zero) + 1]
 
-    nr_alignments = len(graph.subalignmentLengths)
-    input_length = graph.matrixSize
+    n_alignments = len(graph.subalignmentLengths)
+    input_length = len(input_non_zero)
 
     # Write instance
     with open(os.path.join(graph.workingDir, "instance.mzn"), "w") as instance_file:
         instance_file.write(
-            f"nr_alignments = {nr_alignments};\n"
+            f"nr_alignments = {n_alignments};\n"
             + f"input_length = {input_length};\n"
-            + f"upper_bound = {upper_bound};\n"
+            + f"max_id = {upper_bound};\n"
             + "input = ["
             + ",".join([str(val) for val in input_non_zero])
             + "];\n"
@@ -347,5 +348,5 @@ def runMinizincTrace(graph, upper_bound):
     }
     return (
         Task(taskType="runCommand", outputFile=graph.outputPath, taskArgs=taskArgs),
-        input, # Return input with zeroes to allow decoding
+        input,  # Return input with zeroes to allow decoding
     )

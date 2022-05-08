@@ -3,7 +3,7 @@ include "globals.mzn";
 par int: nr_alignments;
 par int: input_length;
 
-par int: max_id = input_length;       %TODO: can we find a better upper bound of the cluster_id?
+par int: max_id;      
 
 array[1..input_length] of var 1..max_id: input;
 array[1..nr_alignments+1] of var 1..input_length+1: subalignment_start;
@@ -27,11 +27,9 @@ constraint forall (n1 in 1..input_length-1,
         then cluster_ids[n1] != cluster_ids[n2]
         endif);
 
-constraint cluster_ids[1] = 1;
-
 % Solve for the least possible cluster id's assigned.
 solve :: int_search(cluster_ids, input_order, indomain_min)
-        minimize max(cluster_ids); % TODO: Check if it would be more efficient to only check for the max value of the last values for each subalignment.
+        satisfy; %minimize max(cluster_ids); % TODO: Check if it would be more efficient to only check for the max value of the last values for each subalignment.
 
 % output["max_id = " ++ show(max(cluster_ids)) ++ "\n" ++ 
 %        join("\n", [ join(", ", [show(cluster_ids[a, c]) | c in 1..max_cols]) | a in 1..nr_alignments])]  ;
