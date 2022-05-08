@@ -326,8 +326,8 @@ def runMinizincTrace(graph, upper_bound):
 
     # Run minizinc
     tempPath = os.path.join(
-        os.path.dirname(graph.outputPath),
-        "temp_{}".format(os.path.basename(graph.outputPath)),
+        os.path.dirname(graph.tracePath),
+        "temp_{}".format(os.path.basename(graph.tracePath)),
     )
     args = [
         Configs.minizincPath,
@@ -343,10 +343,10 @@ def runMinizincTrace(graph, upper_bound):
     ]
     taskArgs = {
         "command": subprocess.list2cmdline(args),
-        "fileCopyMap": {tempPath: graph.outputPath},
+        "fileCopyMap": {tempPath: graph.tracePath},
         "workingDir": graph.workingDir,
     }
     return (
-        Task(taskType="runCommand", outputFile=graph.outputPath, taskArgs=taskArgs),
+        Task(taskType="runCommand", outputFile=graph.tracePath, taskArgs=taskArgs),
         input,  # Return input with zeroes to allow decoding
     )
