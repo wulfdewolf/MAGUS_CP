@@ -13,6 +13,7 @@ from magus_align.merge.graph_cluster.clean_clusters import (
     purgeDuplicateClusters,
 )
 from magus_align.merge.graph_trace.min_clusters import minClustersSearch
+from magus_align.merge.graph_trace.min_clusters_reimplementation import reimplementedMinClustersSearch
 from magus_align.merge.graph_trace.fm import fmAlgorithm
 from magus_align.merge.graph_trace.mwt_search import mwtGreedySearch, mwtSearch
 from magus_align.merge.graph_trace.rg_search import rgSearch
@@ -41,6 +42,8 @@ def findTrace(graph):
 
         if Configs.graphTraceMethod == "minclusters":
             minClustersSearch(graph)
+        if Configs.graphTraceMethod == "minclusters_reimplemented":
+            reimplementedMinClustersSearch(graph)
         elif Configs.graphTraceMethod == "fm":
             fmAlgorithm(graph)
         elif Configs.graphTraceMethod == "mwtgreedy":
