@@ -332,12 +332,12 @@ def runMinizincTrace(graph, upper_bound):
         Configs.minizincPath,
         "-o",
         tempPath,
-        "--model",
+        "--solver",
+        "gecode",
+        # "--model", # not needed locally on Dieter's pc
         os.path.join(
             os.path.dirname(os.path.realpath(__file__)), "minizinc/tracing.mzn"
         ),
-        "--solver",
-        "gecode",
         os.path.join(graph.workingDir, "instance.mzn"),
     ]
     taskArgs = {

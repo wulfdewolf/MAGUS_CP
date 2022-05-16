@@ -39,6 +39,9 @@ def purgeClusterViolations(graph):
     problemRows = [a for a in redundantRows if len(redundantRows[a]) > 1]
     Configs.log("Found {} row violations and {} column violations..".format(len(problemRows), len(problemCols)))
     
+    nr_row_violations = len(problemRows)
+    nr_col_violations = len(problemCols)
+    
     sortedScores = list(elementScores.keys())
     sortedScores.sort(key = lambda x : elementScores[x])
     
@@ -55,4 +58,6 @@ def purgeClusterViolations(graph):
     
     graph.clusters = [cluster for cluster in graph.clusters if len(cluster) > 1]
     Configs.log("Purged cluster violations. Found {} clean clusters..".format(len(graph.clusters)))
+    
+    return nr_row_violations, nr_col_violations
     

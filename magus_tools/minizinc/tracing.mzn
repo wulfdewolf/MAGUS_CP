@@ -29,7 +29,8 @@ constraint forall (n1 in 1..input_length-1,
 
 % Solve for the least possible cluster id's assigned.
 solve :: int_search(cluster_ids, input_order, indomain_min)
-        satisfy; %minimize max(cluster_ids); % TODO: Check if it would be more efficient to only check for the max value of the last values for each subalignment.
+        %satisfy; 
+        minimize max(cluster_ids); % TODO: Check if it would be more efficient to only check for the max value of the last values for each subalignment.
 
 % output["max_id = " ++ show(max(cluster_ids)) ++ "\n" ++ 
 %        join("\n", [ join(", ", [show(cluster_ids[a, c]) | c in 1..max_cols]) | a in 1..nr_alignments])]  ;
