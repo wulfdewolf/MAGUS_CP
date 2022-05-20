@@ -6,7 +6,6 @@ Created on Apr 25, 2022
 
 import copy
 from magus_configuration import Configs
-from cpmpy import *
 from magus_align.merge.graph_trace.min_clusters import minClustersSearch
 from magus_align.merge.graph_cluster.clean_clusters import purgeClusterViolations
 from magus_tools import external_tools
