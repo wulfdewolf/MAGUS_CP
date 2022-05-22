@@ -38,8 +38,7 @@ def findTrace(graph):
 
     else:
         purgeDuplicateClusters(graph)
-        if Configs.graphTraceMethod != "cp":
-            purgeClusterViolations(graph)
+        purgeClusterViolations(graph)
 
         if Configs.graphTraceMethod == "minclusters":
             minClustersSearch(graph)

@@ -20,12 +20,8 @@ def CPSearch(graph):
 
     # Run minclusters to get upperbound
     incorrect_clusters = copy.deepcopy(graph.clusters)
-    print(f"len graph clusters before violations removed =  {len(graph.clusters)}" )
-    nr_row_violations, nr_col_violations = purgeClusterViolations(graph)
-    print(f"len graph clusters after violations removed = {len(graph.clusters)}" )
     minClustersSearch(graph)
-    print(f"row violations = {nr_row_violations} , nr_col_violations = {nr_col_violations}")
-    upper_bound = len(graph.clusters) + nr_row_violations + nr_col_violations
+    upper_bound = len(graph.clusters)
     Configs.log(f"nr of clusters found by minClusters = {upper_bound}")
     graph.clusters = incorrect_clusters
         
