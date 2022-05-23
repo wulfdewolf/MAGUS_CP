@@ -28,7 +28,7 @@ constraint forall (n1 in 1..input_length-1,
         endif);
 
 % Solve for the least possible cluster id's assigned.
-solve :: int_search(cluster_ids, input_order, indomain_min)
+solve :: int_search(cluster_ids, dom_w_deg, indomain_split)
         %satisfy; 
         minimize max(cluster_ids); % TODO: Check if it would be more efficient to only check for the max value of the last values for each subalignment.
 

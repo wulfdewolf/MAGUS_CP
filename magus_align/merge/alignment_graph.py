@@ -112,7 +112,7 @@ class AlignmentGraph:
                 output_idx += 1
 
         # Remove singletons
-        self.clusters = [cluster for cluster in self.clusters if len(cluster) > 1]
+        # self.clusters = [cluster for cluster in self.clusters if len(cluster) > 1]
 
         print("Found {} clusters..".format(n_clusters))
 
